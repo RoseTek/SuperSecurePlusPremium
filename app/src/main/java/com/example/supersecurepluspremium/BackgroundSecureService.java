@@ -2,11 +2,15 @@ package com.example.supersecurepluspremium;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.accessibilityservice.AccessibilityServiceInfo;
 
 public class BackgroundSecureService extends AccessibilityService {
+    private Handler handler;
+    private Runnable runnable;
+
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -18,7 +22,7 @@ public class BackgroundSecureService extends AccessibilityService {
                  //    break;
                 //case AccessibilityEvent.TYPE_VIEW_FOCUSED:
                 //     break;
-            case AccessibilityEvent.TYPE_TOUCH_INTERACTION_START:
+            case AccessibilityEvent.TYPE_VIEW_CLICKED:
                 Log.v("secme","Touch start - service");
                 break;
             default:
@@ -36,11 +40,13 @@ public class BackgroundSecureService extends AccessibilityService {
     @Override
     public void onServiceConnected() {
         Log.v("secme","Service connected - service");
+        /*
         AccessibilityServiceInfo info=getServiceInfo();
-        info.eventTypes = AccessibilityEvent.TYPE_TOUCH_INTERACTION_START;
+        info.eventTypes = AccessibilityEvent.TYPE_VIEW_CLICKED;
         info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
         info.notificationTimeout = 100;
         this.setServiceInfo(info);
+         */
     }
 
 
@@ -49,14 +55,29 @@ public class BackgroundSecureService extends AccessibilityService {
     public void onCreate() {
         super.onCreate();
         Log.v("secme","Service created - service");
+        /*
+        handler = new Handler();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+
+                handler.postDelayed(runnable, runTime);
+            }
+        };
+        handler.post(runnable);
+         */
     }
 
-    /*
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.v("secme", "Service onStartCommand - service");
+        return START_STICKY;
+    }
+
     @SuppressWarnings("deprecation")
     @Override
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
         Log.v("secme", "Service onStart - service");
     }
-    */
 }
