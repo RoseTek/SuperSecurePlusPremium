@@ -18,12 +18,13 @@ public class BackgroundSecureService extends AccessibilityService {
                  //    break;
                 //case AccessibilityEvent.TYPE_VIEW_FOCUSED:
                 //     break;
-            case AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED:
+            case AccessibilityEvent.TYPE_TOUCH_INTERACTION_START:
+                Log.v("secme","Touch start - service");
                 break;
             default:
                 break;
         }
-        eventText = eventText + event.getText();
+        //eventText = eventText + event.getText();
 
     }
 
@@ -36,8 +37,8 @@ public class BackgroundSecureService extends AccessibilityService {
     public void onServiceConnected() {
         Log.v("secme","Service connected - service");
         AccessibilityServiceInfo info=getServiceInfo();
-        info.eventTypes = AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED;
-        info.feedbackType = AccessibilityServiceInfo.FEEDBACK_SPOKEN;
+        info.eventTypes = AccessibilityEvent.TYPE_TOUCH_INTERACTION_START;
+        info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
         info.notificationTimeout = 100;
         this.setServiceInfo(info);
     }

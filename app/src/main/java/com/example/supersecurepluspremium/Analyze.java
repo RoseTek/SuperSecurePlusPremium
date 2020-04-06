@@ -22,23 +22,26 @@ import java.io.FileOutputStream;
 public class Analyze extends AppCompatActivity {
     private static boolean first = true;
 
-    public void onClickScan(View v){
-        Intent returnIntent = new Intent();
-        setResult(RESULT_CANCELED, returnIntent);
-        //prise de screenshot
-
-
-        onBackPressed();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_analyze);
+        Button clickButton = findViewById(R.id.button);
+        clickButton.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent returnIntent = new Intent();
+                setResult(RESULT_CANCELED, returnIntent);
+                //prise de screenshot
+                onBackPressed();
+            }
+        });
+
+
         ImageView imageView = findViewById(R.id.imageView);
         //remplacer icon par l'illustration de notre choix...
         Glide.with(this).load(R.drawable.before_scan).into(imageView);
-        TextView textView = (TextView) findViewById(R.id.textView);
+        TextView textView = findViewById(R.id.textView);
 
         //comportement custom si analyse déjà lancée au moins une fois
         if (!first) {

