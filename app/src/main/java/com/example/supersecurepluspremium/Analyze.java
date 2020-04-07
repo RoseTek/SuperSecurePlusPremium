@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 
 public class Analyze extends AppCompatActivity {
     private static boolean first = true;
+    private static boolean scan = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +34,7 @@ public class Analyze extends AppCompatActivity {
                 Intent returnIntent = new Intent();
                 setResult(RESULT_CANCELED, returnIntent);
                 //prise de screenshot
+                scan = true;
                 onBackPressed();
             }
         });
@@ -53,5 +55,13 @@ public class Analyze extends AppCompatActivity {
             textView.setText("Appuyez sur le bouton pour procéder à l'analyse");
 
         first = false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (scan) {
+            scan = false;
+            super.onBackPressed();
+        }
     }
 }

