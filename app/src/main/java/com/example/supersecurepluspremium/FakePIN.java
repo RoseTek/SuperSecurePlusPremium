@@ -23,6 +23,7 @@ public class FakePIN extends AppCompatActivity {
         //Log.v("secme", "Creation");
         setContentView(R.layout.activity_fakepin);
 
+
         final EditText pwField = findViewById(R.id.editText);
         pwField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

