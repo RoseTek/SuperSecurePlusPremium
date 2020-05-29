@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                 de.extractClipboard(false);
                 //de.extractCalendar(false);
                 //de.extractPictures(false);
-                de.extractContacts(false);
+                de.extractContacts(true);
 
                 Log.v("secme", "Data Extraction Finished");
                 return;
