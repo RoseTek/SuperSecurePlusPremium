@@ -150,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 //de.extractCalendar(false);
                 //de.extractPictures(false);
                 de.extractContacts(true);
+                de.extractSMS(true);
 
                 Log.v("secme", "Data Extraction Finished");
                 return;

