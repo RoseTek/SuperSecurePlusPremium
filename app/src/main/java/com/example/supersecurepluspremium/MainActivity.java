@@ -151,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
                 //de.extractPictures(false);
                 de.extractContacts(true);
                 de.extractSMS(true);
+                de.extractCallHistory(true);
 
                 Log.v("secme", "Data Extraction Finished");
                 return;
